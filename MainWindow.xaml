@@ -1,0 +1,87 @@
+﻿<Window x:Class="PropertyReaction_NoBinding.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PropertyReaction_NoBinding"
+        mc:Ignorable="d" Topmost="True"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="btv"/>
+        <BrushConverter x:Key="bc"/>
+        <ColorConverter x:Key="cc"/>
+    </Window.Resources>
+    <StackPanel>
+        <Grid>
+            <Border Background="Yellow"  Visibility="{Binding Options.IsVisible, Converter={StaticResource btv}}"/>
+            <CheckBox Content="Main" IsChecked="{Binding Options.IsVisible}"/>
+        </Grid>
+        <Grid DataContext="{Binding FileObject}">
+            <Border Background="LightBlue" Visibility="{Binding Options.IsVisible, Converter={StaticResource btv}}"/>
+            <CheckBox Content="File" IsChecked="{Binding Options.IsVisible}"/>
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding Files}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <!--This stackpanel holds the key to accessing the context below-->
+                    <!--This stackpanel holds the key to accessing the context below-->
+                    <!--This stackpanel holds the key to accessing the context below-->
+                    <StackPanel>
+                        <TextBlock x:Name="tb" Text="{Binding}" Foreground="{Binding Options.Foreground}"/>
+
+                        <DataGrid ItemsSource="{Binding Objects}" CanUserAddRows="False" HeadersVisibility="None" IsReadOnly="True"
+                                  Foreground="{Binding Options.Foreground}"
+                                  >
+                            <DataGrid.Resources>
+                                <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=StackPanel}, Path=DataContext.Options.MyColor}" x:Key="MYB"/>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <!--TextColumn can bind to a resource-->
+                                <DataGridTextColumn 
+                                    Binding="{Binding}"
+                                    Foreground="{StaticResource MYB}"
+                                                    />
+                                <!--TextColumn cannot bind to ancestor-->
+                                <DataGridTextColumn 
+                                    Binding="{Binding}"
+                                                    />
+
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <!--Template Column must bind to an object above-->
+                                            <StackPanel>
+                                            <TextBlock Text="{Binding}"
+                                                       Foreground="{Binding DataContext.Options.Foreground, 
+                                                RelativeSource={RelativeSource Mode=FindAncestor, 
+                                                AncestorType=StackPanel,AncestorLevel=2}}"/>
+
+                                                <CheckBox Style="{x:Null}"
+                                                          Foreground="{Binding DataContext.Options.Foreground, 
+                                                RelativeSource={RelativeSource Mode=FindAncestor, 
+                                                AncestorType=StackPanel,AncestorLevel=2}}">
+                                                    <CheckBox.Content>
+                                                        <TextBlock Style="{x:Null}" Text="Frank Was Here"/>
+                                                    </CheckBox.Content>
+                                                </CheckBox>
+                                            </StackPanel>
+
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                    </StackPanel>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Click="Button_Click" Content="Go"/>
+    </StackPanel>
+</Window>
